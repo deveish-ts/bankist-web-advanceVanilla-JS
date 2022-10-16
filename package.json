@@ -1,0 +1,24 @@
+{
+  "name": "starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deveish-ts/https---github.com-deveish-ts-bankist-web-advanceVanilla-JS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deveish-ts/https---github.com-deveish-ts-bankist-web-advanceVanilla-JS/issues"
+  },
+  "homepage": "https://github.com/deveish-ts/https---github.com-deveish-ts-bankist-web-advanceVanilla-JS#readme",
+  "dependencies": {
+    "lite-server": "^2.6.1"
+  }
+}
