@@ -91,11 +91,16 @@ const displayMovements = (movements) => {
   });
 };
 displayMovements(account1.movements);
+// TODO: Calculating and displaying the balance
+const calcDisplayBalance = (movements) => {
+  const balance = movements.reduce((acc, move) => acc + move, 0);
+  labelBalance.textContent = `${balance} EUR`;
+};
+calcDisplayBalance(movements);
 // TODO: Computing user names.
-
 const createUserNames = (accounts) => {
   accounts.forEach((account) => {
-    const gender = `${account.sex === 'male' ? 'Mr.' : 'Ms.'}`;
+    const prefix = `${account.sex === 'male' ? 'Mr.' : 'Ms.'}`;
 
     account.username = account.owner
       .split(' ')
@@ -103,8 +108,7 @@ const createUserNames = (accounts) => {
         return item[0];
       })
       .join('');
-    account.username = gender + account.username;
+    account.username = ` ${prefix}${account.username}`;
   });
 };
 createUserNames(accounts);
-console.log(accounts);
