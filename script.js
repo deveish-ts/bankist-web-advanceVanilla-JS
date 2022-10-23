@@ -97,11 +97,33 @@ const calcDisplayBalance = (movements) => {
   labelBalance.textContent = `${balance} EUR`;
 };
 calcDisplayBalance(movements);
+
+// TODO: Calculating Summary Balance
+const calcDisplaySummary = (movements) => {
+  const income = movements
+    .filter((move) => move > 0)
+    .reduce((acc, curr) => acc + curr, 0);
+  labelSumIn.textContent = `${income}`;
+
+  const outcome = movements
+    .filter((mov) => mov < 0)
+    .reduce((acc, current) => acc + current, 0);
+  labelSumOut.textContent = Math.abs(outcome);
+
+  const interest = movements
+    .filter((move) => move > 0)
+    .map((deposit) => (deposit * 1.2) / 100)
+    .filter((int) => int >= 1)
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+  labelSumInterest.textContent = interest;
+};
+calcDisplaySummary(account1.movements);
 // TODO: Computing user names.
 const createUserNames = (accounts) => {
   accounts.forEach((account) => {
     const prefix = `${account.sex === 'male' ? 'Mr.' : 'Ms.'}`;
-
     account.username = account.owner
       .split(' ')
       .map((item) => {
