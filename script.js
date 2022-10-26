@@ -90,36 +90,35 @@ const displayMovements = (movements) => {
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
-displayMovements(account1.movements);
+
 // TODO: Calculating and displaying the balance
 const calcDisplayBalance = (movements) => {
   const balance = movements.reduce((acc, move) => acc + move, 0);
   labelBalance.textContent = `${balance} EUR`;
 };
-calcDisplayBalance(movements);
 
 // TODO: Calculating Summary Balance
-const calcDisplaySummary = (movements) => {
-  const income = movements
+const calcDisplaySummary = (account) => {
+  const income = account.movements
     .filter((move) => move > 0)
     .reduce((acc, curr) => acc + curr, 0);
   labelSumIn.textContent = `${income}`;
 
-  const outcome = movements
+  const outcome = account.movements
     .filter((mov) => mov < 0)
     .reduce((acc, current) => acc + current, 0);
   labelSumOut.textContent = Math.abs(outcome);
 
-  const interest = movements
+  const interest = account.movements
     .filter((move) => move > 0)
-    .map((deposit) => (deposit * 1.2) / 100)
+    .map((deposit) => (deposit * account.interestRate) / 100)
     .filter((int) => int >= 1)
     .reduce((acc, curr) => {
       return acc + curr;
     }, 0);
   labelSumInterest.textContent = interest;
 };
-calcDisplaySummary(account1.movements);
+
 // TODO: Computing user names.
 const createUserNames = (accounts) => {
   accounts.forEach((account) => {
@@ -131,6 +130,29 @@ const createUserNames = (accounts) => {
       })
       .join('');
     account.username = ` ${prefix}${account.username}`;
+    account.owner = `${prefix} ${account.owner}`;
   });
 };
 createUserNames(accounts);
+// TODO: Login Handler
+let currentAccount;
+btnLogin.addEventListener('click', (e) => {
+  e.preventDefault();
+  currentAccount = accounts.find((account) => {
+    return (
+      account.username.slice(4, account.username.length).toLowerCase() ===
+      inputLoginUsername.value
+    );
+  });
+  if (currentAccount?.pin === +inputLoginPin.value) {
+    //Display UI and message
+    labelWelcome.textContent = `Welcome back ${currentAccount.owner}`;
+    containerApp.style.opacity = 100;
+    // Display movements
+    displayMovements(currentAccount.movements);
+    // Display balance
+    calcDisplayBalance(currentAccount.movements);
+    // Display summary
+    calcDisplaySummary(currentAccount);
+  }
+});
