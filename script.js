@@ -78,6 +78,19 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+// TODO: Utility functions
+const slicer = (acc) => {
+  return acc.username.slice(4, acc.length);
+};
+const updateUI = (currentAccount) => {
+  // Display movements
+  displayMovements(currentAccount.movements);
+  // Display balance
+  calcDisplayBalance(currentAccount);
+  // Display summary
+  calcDisplaySummary(currentAccount);
+};
+// ///////////////////////////
 const displayMovements = (movements) => {
   movements.forEach((movement, index) => {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
@@ -92,9 +105,9 @@ const displayMovements = (movements) => {
 };
 
 // TODO: Calculating and displaying the balance
-const calcDisplayBalance = (movements) => {
-  const balance = movements.reduce((acc, move) => acc + move, 0);
-  labelBalance.textContent = `${balance} EUR`;
+const calcDisplayBalance = (account) => {
+  account.balance = account.movements.reduce((acc, move) => acc + move, 0);
+  labelBalance.textContent = `${account.balance} EUR`;
 };
 
 // TODO: Calculating Summary Balance
@@ -139,20 +152,71 @@ let currentAccount;
 btnLogin.addEventListener('click', (e) => {
   e.preventDefault();
   currentAccount = accounts.find((account) => {
-    return (
-      account.username.slice(4, account.username.length).toLowerCase() ===
-      inputLoginUsername.value
-    );
+    return slicer(account).toLowerCase() === inputLoginUsername.value;
   });
   if (currentAccount?.pin === +inputLoginPin.value) {
     //Display UI and message
     labelWelcome.textContent = `Welcome back ${currentAccount.owner}`;
     containerApp.style.opacity = 100;
-    // Display movements
-    displayMovements(currentAccount.movements);
-    // Display balance
-    calcDisplayBalance(currentAccount.movements);
-    // Display summary
-    calcDisplaySummary(currentAccount);
+    // Update UI
+    updateUI(currentAccount);
+  }
+});
+// TODO: transfer money
+
+btnTransfer.addEventListener('click', (e) => {
+  e.preventDefault();
+  const amount = +inputTransferAmount.value;
+  const receiverAccount = accounts.find((acc) => {
+    return slicer(acc).toLowerCase() === inputTransferTo.value;
+  });
+  console.log(
+    amount,
+    receiverAccount,
+    currentAccount.username.slice(4, currentAccount.username.length)
+  );
+
+  if (
+    amount > 0 &&
+    receiverAccount &&
+    currentAccount.balance >= amount &&
+    receiverAccount !== slicer(currentAccount).toLowerCase()
+  ) {
+    currentAccount.movements.push(-amount);
+    receiverAccount.movements.push(amount);
+    updateUI(currentAccount);
+    console.log('transferred');
+  }
+});
+
+// TODO: Closing the account
+btnClose.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (
+    inputCloseUsername.value === slicer(currentAccount).toLowerCase() &&
+    +inputClosePin.value === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      (acc) =>
+        slicer(acc).toLowerCase() === slicer(currentAccount).toLowerCase()
+    );
+    accounts.splice(index, 1);
+    containerApp.style.opacity = 0;
+  }
+});
+// Request for loan
+
+btnLoan.addEventListener('click', (e) => {
+  e.preventDefault();
+  const amount = +inputLoanAmount.value;
+
+  if (
+    amount > 0 &&
+    currentAccount.movements.some((mov) => {
+      return mov >= amount * 0.1;
+    })
+  ) {
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
   }
 });
