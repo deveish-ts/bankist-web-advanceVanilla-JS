@@ -91,8 +91,11 @@ const updateUI = (currentAccount) => {
   calcDisplaySummary(currentAccount);
 };
 // ///////////////////////////
-const displayMovements = (movements) => {
-  movements.forEach((movement, index) => {
+const displayMovements = (movements, sort) => {
+  containerMovements.innerHTML = '';
+  const moves = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  moves.forEach((movement, index) => {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     const html = `<div class="movements__row">
           <div class="movements__type movements__type--${type}">${
@@ -219,4 +222,13 @@ btnLoan.addEventListener('click', (e) => {
     currentAccount.movements.push(amount);
     updateUI(currentAccount);
   }
+});
+
+// TODO: sorting
+let sort = true;
+btnSort.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  displayMovements(currentAccount.movements, !sort);
+  sort = !sort;
 });
